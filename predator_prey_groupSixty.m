@@ -43,7 +43,7 @@ function predator_prey_groupSixty
        end
    end
    
-   animate_projectiles(time_vals,sol_vals);
+   animate_projectiles(time_vals,sol_vals,.0001);%3rd parameter is delay
    
    % You might find it helpful to add some code below this line
    % to plot graphs showing what happened during the contest.
@@ -53,6 +53,11 @@ function predator_prey_groupSixty
    %(3) Plot speed of predator & prey as functions of time
    %(4) Plot energy of predator & prey as functions of time
 
+   figure;
+   subplot(1,1,1); %number graphs in stack, 1, which number graph now
+   norm(sol_vals(:,1:2)-sol_vals(:,3:4))
+   plot(time_vals,sqrt((sol_vals(:,1)-sol_vals(:,3)).^2+(sol_vals(:,2)-sol_vals(:,4)).^2));
+   title("distance");
 
 
 end
@@ -262,7 +267,7 @@ function F = compute_random_force(t,force_table)
 F = [interp1([0:5:250],force_table(:,1),t);interp1([0:5:250],force_table(:,2),t)];
 end
 
-function animate_projectiles(t,sols)
+function animate_projectiles(t,sols,refreshDelay)
 
 Max_fuel_r = 500000; % Max stored energy for predator
 Max_fuel_y = 50000;  % Max stored energy for prey
@@ -304,7 +309,7 @@ for i = 1:length(t)
     ylim(axes2, [0 120 ]);
     ylabel('%')
     title({'Energy'},'FontSize',14);
-    pause(0.2);
+    pause(refreshDelay);
 end
 end
 
