@@ -2,7 +2,7 @@
 % how to organize a test code.
 % The predator and prey strategies are very basic.
 
-function predator_prey
+function predator_prey_groupSixty
 
    close all
 
@@ -70,8 +70,8 @@ function dwdt = eom(t,w,force_table_predator,force_table_prey)
 
     %      Constants given in the project description
     g = 9.81;
-    mr = 100; % Mass of predator, in kg
-    my = 10.; % Mass of prey, in kg
+    mr = 100.0; % Mass of predator, in kg
+    my = 10.0; % Mass of prey, in kg
     Frmax = 1.3*mr*g; % Max force on predator, in Newtons
     Fymax = 1.4*my*g; % Max force on prey, in Newtons
     c = 0.2; % Viscous drag coeft, in N s/m
@@ -80,10 +80,10 @@ function dwdt = eom(t,w,force_table_predator,force_table_prey)
     Frrand_magnitude = 0.4*mr*g; % Magnitude of random force on predator
     Fyrand_magnitude = 0.4*my*g; % Magnitude of random force on prey
 
-    % Compute all the forces on the predator
+    % Compute all the forces on the predator#############################
     amiapredator = true;
-    Fr = compute_f_mygroupname(t,Frmax,Fymax,amiapredator,pr,vr,Er,py,vy,Ey);
-    Frmag = sqrt(dot(Fr,Fr)); % Prevent prey from cheating....
+    Fr = compute_f_groupSixty(t,Frmax,Fymax,amiapredator,pr,vr,Er,py,vy,Ey);
+    Frmag = sqrt(dot(Fr,Fr)); % Prevent predator from cheating....
     if (Frmag>Frmax)
         Fr=Fr*Frmax/Frmag;
     end
@@ -103,13 +103,29 @@ function dwdt = eom(t,w,force_table_predator,force_table_prey)
 
     dErdt = -Eburnrate_r*norm(Fr)^(3/2);
 
-    % Write similar code below to call your compute_f_groupname function to
-    % compute the force on the prey, determine the random forces on the prey,
-    % and determine the viscous forces on the prey
-
+ % Compute all the forces on the prey################################
     amiapredator = false;
+    Fy = compute_f_groupSixty(t,Frmax,Fymax,amiapredator,pr,vr,Er,py,vy,Ey);
+    Fymag = sqrt(dot(Fy,Fy)); % Prevent predator from cheating....
+    if (Fymag>Fymax)
+        Fy=Fy*Fymax/Fymag;
+    end
+    if (Ey<=0)  % Out of fuel!
+        Fy = [0;0];
+    end
 
+    Fyrand = Fyrand_magnitude*compute_random_force(t,force_table_prey); % Random force on prey
+    Fyvisc = -norm(vy)*vy*c;   % Drag force on prey
+    Fygrav = -my*g*[0;1];      % Gravity force on prey
+    Fytotal = Fy+Fyrand+Fyvisc+Fygrav;  % Total force on prey
 
+    %       If predator is on ground and stationary, and resultant vertical force < 0, set force on predator to zero
+    if (py(2)<=0 && vy(2)<=0 && Fytotal(2)<0)
+        Fytotal = [0;0];
+    end
+
+    dEydt = -Eburnrate_y*norm(Fy)^(3/2);
+    %##### prey calculations done
     dwdt = [vr;vy;Frtotal/mr;Fytotal/my;dErdt;dEydt];
 
     %      This displays a message every time 10% of the computation
@@ -188,29 +204,28 @@ function [continue_running,initial_w,start_time] = handle_event(event_time,event
     
 end
     
-%% CHANGE THE NAME OF THE FUNCTION TO A UNIQUE GROUP NAME BEFORE SUBMITTING    
-function F = compute_f_mygroupname(t,Frmax,Fymax,amiapredator,pr,vr,Er,py,vy,Ey)
+function F = compute_f_groupSixty(t,Frmax,Fymax,amiapredator,pr,vr,Er,py,vy,Ey)
 
 
 % PLEASE FILL OUT THE INFORMATION BELOW WHEN YOU SUBMIT YOUR CODE
-% Test time and place: Enter the time and room for your test here 
-% Group members: list the names of your group members here
+%% Test time and place: Enter the time and room for your test here 
+% Group members: Benjamin Joshua Mason Serdar
 
 
 %   t: Time
 %   Frmax: Max force that can act on the predator
-%   Fymax: Max force that can act on th eprey
+%   Fymax: Max force that can act on the prey
 %   amiapredator: Logical variable - if amiapredator is true,
 %   the function must compute forces acting on a predator.
 %   If false, code must compute forces acting on a prey.
-%   pr - 2D vector with current position of predator eg pr = [x_r,y_r]
-%   vr - 2D vector with current velocity of predator eg vr= [vx_r,vy_r]
+%   pr - 2D vector with current position of predator eg pr = [x_r;y_r]
+%   vr - 2D vector with current velocity of predator eg vr= [vx_r;vy_r]
 %   Er - energy remaining for predator
-%   py - 2D vector with current position of prey py = [x_prey,y_prey]
-%   vy - 2D vector with current velocity of prey py = [vx_prey,vy_prey]
+%   py - 2D vector with current position of prey py = [x_prey;y_prey]
+%   vy - 2D vector with current velocity of prey py = [vx_prey;vy_prey]
 %   Ey - energy remaining for prey
 %   F - 2D vector specifying the force to be applied to the object
-%   that you wish to control F = [Fx,Fy]
+%   that you wish to control F = [Fx;Fy]
 %   The direction of the force is arbitrary, but if the
 %   magnitude you specify exceeds the maximum allowable
 %   value its magnitude will be reduced to this value
@@ -226,12 +241,12 @@ function F = compute_f_mygroupname(t,Frmax,Fymax,amiapredator,pr,vr,Er,py,vy,Ey)
 
   %
   if (amiapredator)
-    % Code to compute the force to be applied to the predator
-
+%###% Code to compute the force to be applied to the predator#############
+    F=[0;g*mr*1.1];%just go up, replace this basic example
  
   else
-    % Code to compute the force to be applied to the prey
-
+%###% Code to compute the force to be applied to the prey#################
+    F=[0;g*my*2];%just go up, replace this basic example
  
    end
   
