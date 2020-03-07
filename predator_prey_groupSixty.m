@@ -43,6 +43,8 @@ function predator_prey_groupSixty
        end
    end
    
+   survival_time=max(time_vals/250)%what fraction did you survive for?
+   
    animate_projectiles(time_vals,sol_vals,.0001);%3rd parameter is delay
    
    % You might find it helpful to add some code below this line
@@ -52,10 +54,9 @@ function predator_prey_groupSixty
    %(2) Plot the altitude of predator & prey as function of time
    %(3) Plot speed of predator & prey as functions of time
    %(4) Plot energy of predator & prey as functions of time
-
+   
    figure;
    subplot(1,1,1); %number graphs in stack, 1, which number graph now
-   norm(sol_vals(:,1:2)-sol_vals(:,3:4))
    plot(time_vals,sqrt((sol_vals(:,1)-sol_vals(:,3)).^2+(sol_vals(:,2)-sol_vals(:,4)).^2));
    title("distance");
 
@@ -101,7 +102,7 @@ function dwdt = eom(t,w,force_table_predator,force_table_prey)
     Frgrav = -mr*g*[0;1];      % Gravity force on predator
     Frtotal = Fr+Frrand+Frvisc+Frgrav;  % Total force on predator
 
-    %       If predator is on ground and stationary, and resultant vertical force < 0, set force on predator to zero
+    %       If predator is on ground and stationary, and resultant vertical velocity < 0, set force on predator to zero
     if (pr(2)<=0 && vr(2)<=0 && Frtotal(2)<0)
         Frtotal = [0;0];
     end
@@ -124,7 +125,7 @@ function dwdt = eom(t,w,force_table_predator,force_table_prey)
     Fygrav = -my*g*[0;1];      % Gravity force on prey
     Fytotal = Fy+Fyrand+Fyvisc+Fygrav;  % Total force on prey
 
-    %       If predator is on ground and stationary, and resultant vertical force < 0, set force on predator to zero
+    %       If predator is on ground and stationary, and resultant vertical velocity < 0, set force on predator to zero
     if (py(2)<=0 && vy(2)<=0 && Fytotal(2)<0)
         Fytotal = [0;0];
     end
@@ -247,14 +248,20 @@ function F = compute_f_groupSixty(t,Frmax,Fymax,amiapredator,pr,vr,Er,py,vy,Ey)
   %
   if (amiapredator)
 %###% Code to compute the force to be applied to the predator#############
-    F=[0;g*mr*1.1];%just go up, replace this basic example
- 
-  else
-%###% Code to compute the force to be applied to the prey#################
-    F=[0;g*my*2];%just go up, replace this basic example
- 
-   end
-  
+    Ftp=((py+vy*3)-(pr+vr*3)); %go towards future positions
+    Ftp=.7*Frmax*Ftp/norm(Ftp);
+    if t<4
+        Flaunch=[0;1*g*mr];
+    else
+        Flaunch=[0;0];
+    end
+    F=Ftp+Flaunch+[0;g*mr];            %add all forces together
+  else %not a predator
+%###% Code to compute the force to be applied to the prey################# 
+  %replace the following example for prey
+  F=[cos(2.3)*Fymax;sin(2.3)*Fymax];
+    
+  end %end not a predator
 end
 %%
 function F = compute_random_force(t,force_table)
