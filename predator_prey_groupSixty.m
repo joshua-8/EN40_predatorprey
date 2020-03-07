@@ -1,6 +1,3 @@
-% This is a basic predator-prey script that is intended to show
-% how to organize a test code.
-% The predator and prey strategies are very basic.
 
 function predator_prey_groupSixty
 
@@ -45,7 +42,7 @@ function predator_prey_groupSixty
    
    survival_time=max(time_vals/250)%what fraction did you survive for?
    
-   animate_projectiles(time_vals,sol_vals,.0001);%3rd parameter is delay
+   animate_projectiles(time_vals,sol_vals,.001);%3rd parameter is delay
    
    % You might find it helpful to add some code below this line
    % to plot graphs showing what happened during the contest.
@@ -56,9 +53,18 @@ function predator_prey_groupSixty
    %(4) Plot energy of predator & prey as functions of time
    
    figure;
-   subplot(1,1,1); %number graphs in stack, 1, which number graph now
+   subplot(4,1,1); %number graphs in stack, 1, which number graph now
    plot(time_vals,sqrt((sol_vals(:,1)-sol_vals(:,3)).^2+(sol_vals(:,2)-sol_vals(:,4)).^2));
    title("distance");
+   subplot(4,1,2); %number graphs in stack, 1, which number graph now
+   plot(time_vals,sol_vals(:,5:8));
+   title("velocity");
+   subplot(4,1,3); %number graphs in stack, 1, which number graph now
+   plot(time_vals,sol_vals(:,1:4));
+   title("position");
+   subplot(4,1,4); %number graphs in stack, 1, which number graph now
+   plot(time_vals,sol_vals(:,9:10));
+   title("energy");
 
 
 end
@@ -245,23 +251,38 @@ function F = compute_f_groupSixty(t,Frmax,Fymax,amiapredator,pr,vr,Er,py,vy,Ey)
     Max_fuel_r = 500000; % Max stored energy for predator
     Max_fuel_y = 50000;  % Max stored energy for prey
 
-  %
   if (amiapredator)
 %###% Code to compute the force to be applied to the predator#############
-    Ftp=((py+vy*3)-(pr+vr*3)); %go towards future positions
-    Ftp=.7*Frmax*Ftp/norm(Ftp);
-    if t<4
+    velI=min(.05*norm(py-pr),5); %how far ahead to look
+    Ftp=((py+vy*velI)-(pr+vr*velI*.95)); %go towards future positions
+    Ftp=.5*Frmax*Ftp/norm(Ftp);
+    if t<2
         Flaunch=[0;1*g*mr];
     else
         Flaunch=[0;0];
     end
-    F=Ftp+Flaunch+[0;g*mr];            %add all forces together
-  else %not a predator
+    if(Er>Max_fuel_r/5 || t>200) %if don't need to refuel
+            F=Ftp+Flaunch+[0;g*mr];  %add all forces together
+    else
+        F=[0;0]; %if high up just fall
+        if(pr(2)<500) %low enough to start stopping
+            F=Frmax*-vr*.06; %extra drag force slows to safe falling rate
+        end
+    end
+  else %prey, not a predator
 %###% Code to compute the force to be applied to the prey################# 
-  %replace the following example for prey
-  F=[cos(2.3)*Fymax;sin(2.3)*Fymax];
+    %improve the prey algorithm
+    if(t<=2)
+        F=[0;1*Fymax];
+    else
+        if(mod(floor(t/9),2)==0)
+            F=[my*g*.3;my*g];        
+        else
+            F=[-my*g*.3;my*g];  
+        end
+    end
     
-  end %end not a predator
+  end %end prey, not a predator
 end
 %%
 function F = compute_random_force(t,force_table)
