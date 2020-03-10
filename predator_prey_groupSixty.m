@@ -85,7 +85,7 @@ function dwdt = eom(t,w,force_table_predator,force_table_prey)
     mr = 100.0; % Mass of predator, in kg
     my = 10.0; % Mass of prey, in kg
     Frmax = 1.3*mr*g; % Max force on predator, in Newtons
-    Fymax = 9*my*g;%1.4*my*g; % Max force on prey, in Newtons
+    Fymax = 1.4*my*g; % Max force on prey, in Newtons
     c = 0.2; % Viscous drag coeft, in N s/m
     Eburnrate_r = 0.1;
     Eburnrate_y = 0.2;
@@ -272,8 +272,7 @@ function F = compute_f_groupSixty(t,Frmax,Fymax,amiapredator,pr,vr,Er,py,vy,Ey)
   else %prey, not a predator
 %###% Code to compute the force to be applied to the prey################# 
     %improve the prey algorithm
-    F=[0;0];
-        F=[-Fymax*.4;my*g*1];
+    F=[-Fymax*.4;my*g*1];
   end %end prey, not a predator
 end
 %%
