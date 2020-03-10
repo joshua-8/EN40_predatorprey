@@ -126,7 +126,7 @@ function dwdt = eom(t,w,force_table_predator,force_table_prey)
         Fy = [0;0];
     end
 
-    Fyrand = 0;%Fyrand_magnitude*compute_random_force(t,force_table_prey); % Random force on prey
+    Fyrand = Fyrand_magnitude*compute_random_force(t,force_table_prey); % Random force on prey
     Fyvisc = -norm(vy)*vy*c;   % Drag force on prey
     Fygrav = -my*g*[0;1];      % Gravity force on prey
     Fytotal = Fy+Fyrand+Fyvisc+Fygrav;  % Total force on prey
