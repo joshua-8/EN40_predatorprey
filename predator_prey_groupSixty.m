@@ -85,7 +85,7 @@ function dwdt = eom(t,w,force_table_predator,force_table_prey)
     mr = 100.0; % Mass of predator, in kg
     my = 10.0; % Mass of prey, in kg
     Frmax = 1.3*mr*g; % Max force on predator, in Newtons
-    Fymax = 1.4*my*g; % Max force on prey, in Newtons
+    Fymax = 9*my*g;%1.4*my*g; % Max force on prey, in Newtons
     c = 0.2; % Viscous drag coeft, in N s/m
     Eburnrate_r = 0.1;
     Eburnrate_y = 0.2;
@@ -126,7 +126,7 @@ function dwdt = eom(t,w,force_table_predator,force_table_prey)
         Fy = [0;0];
     end
 
-    Fyrand = Fyrand_magnitude*compute_random_force(t,force_table_prey); % Random force on prey
+    Fyrand = 0;%Fyrand_magnitude*compute_random_force(t,force_table_prey); % Random force on prey
     Fyvisc = -norm(vy)*vy*c;   % Drag force on prey
     Fygrav = -my*g*[0;1];      % Gravity force on prey
     Fytotal = Fy+Fyrand+Fyvisc+Fygrav;  % Total force on prey
@@ -272,16 +272,8 @@ function F = compute_f_groupSixty(t,Frmax,Fymax,amiapredator,pr,vr,Er,py,vy,Ey)
   else %prey, not a predator
 %###% Code to compute the force to be applied to the prey################# 
     %improve the prey algorithm
-    if(t<=2)
-        F=[0;1*Fymax];
-    else
-        if(mod(floor(t/9),2)==0)
-            F=[my*g*.3;my*g];        
-        else
-            F=[-my*g*.3;my*g];  
-        end
-    end
-    
+    F=[0;0];
+        F=[-Fymax*.4;my*g*1];
   end %end prey, not a predator
 end
 %%
