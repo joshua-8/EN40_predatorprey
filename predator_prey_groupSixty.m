@@ -85,10 +85,10 @@ function dwdt = eom(t,w,force_table_predator,force_table_prey)
     mr = 100.0; % Mass of predator, in kg
     my = 10.0; % Mass of prey, in kg
     Frmax = 1.3*mr*g; % Max force on predator, in Newtons
-    Fymax = 1.4*my*g; % Max force on prey, in Newtons
+    Fymax = 9*my*g; % Max force on prey, in Newtons
     c = 0.2; % Viscous drag coeft, in N s/m
     Eburnrate_r = 0.1;
-    Eburnrate_y = 0.2;
+    Eburnrate_y = 0.002;
     Frrand_magnitude = 0.4*mr*g; % Magnitude of random force on predator
     Fyrand_magnitude = 0.4*my*g; % Magnitude of random force on prey
 
@@ -269,13 +269,13 @@ function F = compute_f_groupSixty(t,Frmax,Fymax,amiapredator,pr,vr,Er,py,vy,Ey)
     else
         F=[0;0]; %if high up just fall
         if(pr(2)<500) %low enough to start stopping
-            F=Frmax*-vr*.06; %extra drag force slows to safe falling rate
+            F=Frmax*-vr*.07; %extra drag force slows to safe falling rate
         end
     end
   else %prey, not a predator
 %###% Code to compute the force to be applied to the prey################# 
     %improve the prey algorithm
-    F=[cos(t/2)*my*g*.2;my*g*1.01+sin(t/2)*my*g*.05];
+    F=[cos(t/2)*my*g*.2;my*g*9.01+sin(t/2)*my*g*.05];
   end %end prey, not a predator
 end
 %%
