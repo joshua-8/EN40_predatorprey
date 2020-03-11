@@ -272,9 +272,10 @@ function F = compute_f_groupSixty(t,Frmax,Fymax,amiapredator,pr,vr,Er,py,vy,Ey)
   else %prey, not a predator
 %###% Code to compute the force to be applied to the prey################# 
     %improve the prey algorithm
-    Fgroundy=[0;.2*Fymax/(py(2)+2)];
-    dir=vr/(norm(vr)+.001)*(.3+.7-min(norm(pr-py)/200,.7));
-    Fescy=Fymax*[dir(2);-dir(1)];
+    Fgroundy=[0;1*Fymax/(py(2)+2)^.25];
+    theta=50;
+    dir=[cos(-theta*pi/180)*vr(1)-sin(-theta*pi/180)*vr(2);sin(-theta*pi/180)*vr(1)+cos(-theta*pi/180)*vr(2)];
+    Fescy=Fymax*dir/(norm(vr)+.001)*(.3+.8-min(norm(pr-py)/175,.8));
     F=Fgroundy+Fescy+[0;my*g];
   end %end prey, not a predator
 end
