@@ -1,8 +1,6 @@
 function F = compute_f_groupSixty(t,Frmax,Fymax,amiapredator,pr,vr,Er,py,vy,Ey)
-
-
 % PLEASE FILL OUT THE INFORMATION BELOW WHEN YOU SUBMIT YOUR CODE
-%% Test time and place: Enter the time and room for your test here 
+%% Test time and place: 4pm ERC325
 % Group members: Benjamin Joshua Mason Serdar
 
 
