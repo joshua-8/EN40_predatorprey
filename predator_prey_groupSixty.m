@@ -266,7 +266,7 @@ function F = compute_f_groupSixty(t,Frmax,Fymax,amiapredator,pr,vr,Er,py,vy,Ey)
     else
         F=[0;0]; %if high up just fall
         if(pr(2)<500) %low enough to start stopping
-            F=Frmax*-vr*.06; %extra drag force slows to safe falling rate
+            F=Frmax*-vr*.07; %extra drag force slows to safe falling rate
         end
     end
   else %prey, not a predator
