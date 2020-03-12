@@ -256,7 +256,7 @@ function F = compute_f_groupSixty(t,Frmax,Fymax,amiapredator,pr,vr,Er,py,vy,Ey)
     velI=min(.05*norm(py-pr),5); %how far ahead to look
     Ftp=((py+vy*velI)-(pr+vr*velI*.95)); %go towards future positions
     Ftp=.5*Frmax*Ftp/norm(Ftp);
-    if t<2
+    if t<=4
         Flaunch=[0;1*g*mr];
     else
         Flaunch=[0;0];
@@ -271,17 +271,12 @@ function F = compute_f_groupSixty(t,Frmax,Fymax,amiapredator,pr,vr,Er,py,vy,Ey)
     end
   else %prey, not a predator
 %###% Code to compute the force to be applied to the prey################# 
-    %improve the prey algorithm
-    if(t<=2)
-        F=[0;1*Fymax];
-    else
-        if(mod(floor(t/9),2)==0)
-            F=[my*g*.3;my*g];        
-        else
-            F=[-my*g*.3;my*g];  
-        end
-    end
-    
+    Fgroundy=[0;30*Fymax/(py(2)+.02)^5];
+        theta=65;
+        dir=[cos(-theta*pi/180)*vr(1)-sin(-theta*pi/180)*vr(2);sin(-theta*pi/180)*vr(1)+cos(-theta*pi/180)*vr(2)];
+        Fescy=Fymax*dir/(norm(vr)+.0001)*(.01+.48-min(norm(pr-py)^2/20000,.48));
+        Fescy=Fescy/(norm(Fescy)+.001)*min(norm(Fescy),Fymax*.9);
+    F=Fgroundy+Fescy+[0;my*g];
   end %end prey, not a predator
 end
 %%
