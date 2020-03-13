@@ -1,5 +1,7 @@
 
 function predator_prey_groupSixty
+rate=4/30;   
+
 
    close all
 
@@ -22,7 +24,7 @@ function predator_prey_groupSixty
        
        % ODE113 will continue running until either 250s is up; a catch occurs; or predator or prey hit the ground
        if (250-start_time>2)
-         tspan = start_time:1:250; % This spaces the time intervals by 1s for a smooth animation
+         tspan = start_time:rate:250; % This spaces the time intervals by 1s for a smooth animation
        else
          tspan = [start_time,250];
        end
@@ -308,11 +310,11 @@ ymin = min(min(sols(:,4)),min(sols(:,2)));
 
 dx = 0.1*(xmax-xmin)+0.5;
 dy = 0.1*(ymax-ymin)+0.5;
-
+savedFrame=[];
+rate=1/10;
 for i = 1:length(t)
     clf
     axes1 = axes('Parent',figure1,'Position',[0.08 0.06914 0.44 0.8]);
-
     plot(axes1,sols(1:i,3),sols(1:i,4),'LineWidth',2,'LineStyle',...
     ':','Color',[0 0 1]);
     ylim(axes1,[ymin-dy ymax+dy]);
@@ -332,6 +334,17 @@ for i = 1:length(t)
     ylim(axes2, [0 120 ]);
     ylabel('%')
     title({'Energy'},'FontSize',14);
+    filename='test3.gif';
+    drawnow;
+    frame=getframe(axes1);
+    im=frame2im(frame);
+    [imind,cm]=rgb2ind(im,256);
+    if (size(savedFrame)==[0,0])
+        savedFrame=zeros(2);
+        imwrite(imind,cm,filename,'gif', 'Loopcount',inf,'DelayTime',rate/4); 
+    else 
+        imwrite(imind,cm,filename,'gif','WriteMode','append','DelayTime',rate/4); 
+    end 
     pause(refreshDelay);
 end
 end
