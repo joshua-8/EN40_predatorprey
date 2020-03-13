@@ -334,7 +334,7 @@ for i = 1:length(t)
     ylim(axes2, [0 120 ]);
     ylabel('%')
     title({'Energy'},'FontSize',14);
-    filename='test4.gif';
+    filename='test11.gif';
     drawnow;
     frame=getframe(axes1);
     im=frame2im(frame);
